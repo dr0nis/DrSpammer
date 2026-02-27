@@ -1,0 +1,505 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	
+	<Frame name="DrSpammerSettingBackgroundTemplate" virtual="true">
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize><AbsValue val="16"/></EdgeSize>
+			<TileSize><AbsValue val="16"/></TileSize>
+			<BackgroundInsets><AbsInset left="5" right="5" top="5" bottom="5"/></BackgroundInsets>
+		</Backdrop>
+		<Scripts>
+<OnLoad>
+    self:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+    self:SetBackdropColor(0.1, 0.1, 0.1, 0.1);
+</OnLoad>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="DrSpammerSlotTemplate" virtual="true" inherits="DrSpammerSettingBackgroundTemplate">
+		<Size y="32"/>
+		<Layers>
+			<Layer>
+				<FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT">
+					<Size y="16"/>
+					<Anchors>
+						<Anchor point="LEFT"><Offset x="10" y="0"/></Anchor>
+						<Anchor point="RIGHT"><Offset x="-70" y="0"/></Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentStart" text="Start" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="45" y="20"/>
+				<Anchors><Anchor point="RIGHT"><Offset x="-5" y="0"/></Anchor></Anchors>
+				<Scripts><OnClick>DrSpammer_StartSlot(this:GetID())</OnClick></Scripts>
+			</Button>
+			<Button name="$parentStop" text="Stop" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="45" y="20"/>
+				<Anchors><Anchor point="RIGHT"><Offset x="-5" y="0"/></Anchor></Anchors>
+				<Scripts><OnClick>DrSpammer_StopSlot(this:GetID())</OnClick></Scripts>
+			</Button>
+			<Button name="$parentEdit" text="E" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="20" y="20"/>
+				<Anchors><Anchor point="RIGHT"><Offset x="-55" y="0"/></Anchor></Anchors>
+				<Scripts><OnClick>DrSpammer_EditSlot(this:GetID())</OnClick></Scripts>
+			</Button>
+			<Button name="$parentDelete" text="X" inherits="UIPanelButtonTemplate" hidden="true">
+				<Size x="20" y="20"/>
+				<Anchors><Anchor point="RIGHT"><Offset x="-80" y="0"/></Anchor></Anchors>
+				<Scripts><OnClick>DrSpammer_DeleteSlot(this:GetID())</OnClick></Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+	
+	<Frame name="DrSpammer" toplevel="true" enableMouse="true" movable="true" parent="UIParent" hidden="false">
+		<Size x="100" y="20"/>
+		<Anchors><Anchor point="CENTER"/></Anchors>
+		<Layers>
+			<Layer>
+				<FontString name="DrSpammerText" inherits="GameFontHighlight" text="B_Spa |cffff0000выкл|r">
+					<Size x="90" y="16"/>
+					<Anchors><Anchor point="CENTER"/></Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnUpdate>DrSpammer:OnUpdate()</OnUpdate>
+			<OnMouseUp>
+				if this.isMoving then
+					this:StopMovingOrSizing()
+					this.isMoving = false
+					DrSpammer:SavePosition(1)
+				end
+				DrSpammer:OnMouseUp(self, arg1)
+			</OnMouseUp>
+			<OnMouseDown>
+				if (not this.isLocked or this.isLocked == 0) and arg1 == "LeftButton" then
+					this:StartMoving()
+					this.isMoving = true
+				end
+				DrSpammer:OnMouseDown(self, arg1)
+			</OnMouseDown>
+			<OnEnter>DrSpammer:OnEnter()</OnEnter>
+			<OnLeave>DrSpammer:OnLeave()</OnLeave>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="DrSpammerSetting" toplevel="true" enableMouse="true" movable="true" parent="UIParent" hidden="true" inherits="DrSpammerSettingBackgroundTemplate">
+		<Size x="650" y="500"/>
+		<Anchors><Anchor point="CENTER"/></Anchors>
+		
+		<Layers>
+			<Layer>
+				<Texture name="DrSpammerBackground" file="Interface\AddOns\DrSpammer\img\ezwow.png">
+					<Size x="650" y="500"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				
+<FontString name="DrSpammerSettingTitleText1" inherits="GameFontHighlightLarge" text="Помощник чата от Андрея для ">
+    <Size x="400" y="12"/>
+    <Anchors><Anchor point="TOP"><Offset x="-30" y="-15"/></Anchor></Anchors>
+</FontString>
+
+<FontString name="DrSpammerIsengardText" inherits="GameFontHighlightLarge" text="Isengard">
+    <Size x="70" y="12"/>
+    <Anchors>
+        <Anchor point="LEFT" relativeTo="DrSpammerSettingTitleText1" relativePoint="RIGHT">
+            <Offset x="-80" y="0"/>
+        </Anchor>
+    </Anchors>
+    <Color r="0.3" g="1" b="0.3"/>
+</FontString>				
+				<FontString name="DrSpammerSettingTitleSection1" inherits="GameFontNormalHuge" text="Нaстройка">
+					<Size x="200" y="16"/>
+					<Anchors><Anchor point="TOPLEFT"><Offset x="30" y="-50"/></Anchor></Anchors>
+				</FontString>
+				
+				<FontString name="DrSpammerSettingTitleText21" inherits="GameFontNormal" text="Канал:">
+					<Size x="50" y="16"/>
+					<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleSection1" relativePoint="BOTTOMLEFT"><Offset x="0" y="-20"/></Anchor></Anchors>
+				</FontString>
+				
+				<FontString name="DrSpammerSettingTitleText22" inherits="GameFontNormal" text="Тип чата:">
+					<Size x="70" y="16"/>
+					<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText21" relativePoint="BOTTOMLEFT"><Offset x="0" y="-30"/></Anchor></Anchors>
+				</FontString>
+				
+				<FontString name="DrSpammerSettingTitleText23" inherits="GameFontNormal" text="Шаблон:">
+					<Size x="60" y="16"/>
+					<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText22" relativePoint="BOTTOMLEFT"><Offset x="0" y="-30"/></Anchor></Anchors>
+				</FontString>
+				
+				<FontString name="DrSpammerSettingTitleText24" inherits="GameFontNormal" text="Интервал (сек):">
+					<Size x="110" y="16"/>
+					<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText23" relativePoint="BOTTOMLEFT"><Offset x="0" y="-30"/></Anchor></Anchors>
+				</FontString>
+				
+				<FontString name="DrSpammerSettingTitleText31" inherits="GameFontNormal" text="Текст сообщения:" justifyH="LEFT">
+					<Size x="120" y="16"/>
+					<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText24" relativePoint="BOTTOMLEFT"><Offset x="0" y="-70"/></Anchor></Anchors>
+				</FontString>
+				
+				<FontString name="DrSpammerSettingTextSymbols" inherits="GameFontHighlight" text="Символы: 0/500" justifyH="LEFT">
+					<Size x="150" y="16"/>
+					<Anchors><Anchor point="LEFT" relativeTo="DrSpammerSettingTitleText31" relativePoint="RIGHT"><Offset x="10" y="0"/></Anchor></Anchors>
+				</FontString>
+
+				<FontString name="DrSpammerSettingTitleSection2" inherits="GameFontNormalHuge" text="Cлоты">
+					<Size x="200" y="16"/>
+					<Anchors><Anchor point="TOPLEFT"><Offset x="310" y="-50"/></Anchor></Anchors>
+				</FontString>
+				
+<FontString name="DrSpammerOpacityText" inherits="GameFontNormalSmall" text="Прозрачность: 50%">
+    <Size x="130" y="8"/>
+    <Anchors><Anchor point="BOTTOMRIGHT"><Offset x="-35" y="10"/></Anchor></Anchors>
+</FontString>
+			</Layer>
+		</Layers>
+		
+		<Frames>
+
+			<Button name="DrSpammerSettingCloseButton" inherits="UIPanelCloseButton">
+				<Size x="55" y="55"/>
+				<Anchors><Anchor point="TOPRIGHT"><Offset x="0" y="0"/></Anchor></Anchors>
+			</Button>
+			<Button name="DrSpammerSettingCloseButton" inherits="UIPanelCloseButton">
+				<Size x="55" y="55"/>
+				<Anchors><Anchor point="TOPLEFT"><Offset x="0" y="0"/></Anchor></Anchors>
+			</Button>
+			<Button name="DrSpammerSettingCloseButton" inherits="UIPanelCloseButton">
+				<Size x="55" y="55"/>
+				<Anchors><Anchor point="BOTTOMRIGHT"><Offset x="0" y="0"/></Anchor></Anchors>
+			</Button>
+			<Button name="DrSpammerSettingCloseButton" inherits="UIPanelCloseButton">
+				<Size x="36" y="36"/>
+				<Anchors><Anchor point="BOTTOMLEFT"><Offset x="2" y="-1"/></Anchor></Anchors>
+			</Button>
+			<Button name="DrSpammerIsengardButton">
+				<Size x="330" y="35"/>
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset x="5" y="-5"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						DrSpammer_ShowIsengardDialog()
+					</OnClick>
+					<OnEnter>
+						DrSpammerTooltip:SetOwner(self, "ANCHOR_CURSOR")
+						DrSpammerTooltip:ClearLines()
+						DrSpammerTooltip:AddLine("https://ezwow.org/", 0, 1, 0)
+						DrSpammerTooltip:Show()
+						_G["DrSpammerIsengardText"]:SetTextColor(0, 1, 0)
+					</OnEnter>
+					<OnLeave>
+						DrSpammerTooltip:Hide()
+						_G["DrSpammerIsengardText"]:SetTextColor(0.3, 1, 0.3)
+					</OnLeave>
+				</Scripts>
+				<NormalTexture alpha="1"/>
+				<HighlightTexture alpha="0.4" file="Interface\Buttons\UI-Panel-Button-Highlight"/>
+			</Button>
+
+			<Frame name="DrSpammerSettingChanel" inherits="DrSpammerSettingBackgroundTemplate">
+				<Size x="150" y="25"/>
+				<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText21" relativePoint="BOTTOMLEFT"><Offset x="60" y="-5"/></Anchor></Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="DrSpammerSettingChanelEditBox" inherits="ChatFontNormal" text="Канал 1" justifyH="LEFT">
+							<Size x="120" y="16"/>
+							<Anchors><Anchor point="TOPLEFT"><Offset x="5" y="-4"/></Anchor></Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="DrSpammerSettingChanelButton">
+						<Size x="24" y="24"/>
+						<Anchors><Anchor point="TOPRIGHT"/></Anchors>
+						<Scripts><OnClick>DrSpammerSettingChanelButton_OnClick()</OnClick></Scripts>
+						<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+					</Button>
+				</Frames>
+			</Frame>
+			
+			<Frame name="DrSpammerSettingChatType" inherits="DrSpammerSettingBackgroundTemplate">
+				<Size x="150" y="25"/>
+				<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText22" relativePoint="BOTTOMLEFT"><Offset x="60" y="-5"/></Anchor></Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="DrSpammerSettingChatTypeEditBox" inherits="ChatFontNormal" text="CHANNEL" justifyH="LEFT">
+							<Size x="120" y="16"/>
+							<Anchors><Anchor point="TOPLEFT"><Offset x="5" y="-4"/></Anchor></Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="DrSpammerSettingChatTypeButton">
+						<Size x="24" y="24"/>
+						<Anchors><Anchor point="TOPRIGHT"/></Anchors>
+						<Scripts><OnClick>DrSpammerChatTypeDropdown_OnClick()</OnClick></Scripts>
+						<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+					</Button>
+				</Frames>
+			</Frame>
+
+			<Frame name="DrSpammerSettingTextPattern" inherits="DrSpammerSettingBackgroundTemplate">
+				<Size x="150" y="25"/>
+				<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText23" relativePoint="BOTTOMLEFT"><Offset x="60" y="-5"/></Anchor></Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="DrSpammerSettingTextPatternEditBox" inherits="ChatFontNormal" text="Шаблон 1" justifyH="LEFT">
+							<Size x="120" y="16"/>
+							<Anchors><Anchor point="TOPLEFT"><Offset x="5" y="-4"/></Anchor></Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="DrSpammerSettingTextPatternButton">
+						<Size x="24" y="24"/>
+						<Anchors><Anchor point="TOPRIGHT"/></Anchors>
+						<Scripts><OnClick>DrSpammerSettingTextPatternButton_OnClick()</OnClick></Scripts>
+						<NormalTexture file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+					</Button>
+				</Frames>
+			</Frame>
+
+			<Button name="DrSpammerIntervalButton" inherits="UIPanelButtonTemplate" text="30 cек.">
+				<Size x="80" y="25"/>
+				<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText24" relativePoint="BOTTOMLEFT"><Offset x="95" y="-5"/></Anchor></Anchors>
+				<Scripts><OnClick>DrSpammer_ToggleIntervalEdit()</OnClick></Scripts>
+			</Button>
+
+			<Frame name="DrSpammerIntervalEditFrame" hidden="true">
+				<Size x="110" y="25"/>
+				<Anchors><Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText24" relativePoint="BOTTOMLEFT"><Offset x="95" y="-5"/></Anchor></Anchors>
+				<Frames>
+					<Button name="DrSpammerIntervalOkButton" inherits="UIPanelButtonTemplate" text="OK">
+						<Size x="30" y="25"/>
+						<Anchors><Anchor point="LEFT"><Offset x="0" y="0"/></Anchor></Anchors>
+						<Scripts><OnClick>DrSpammer_SaveIntervalEdit()</OnClick></Scripts>
+					</Button>
+					<EditBox name="DrSpammerIntervalEditBox" letters="5" autoFocus="true" numeric="true">
+						<Size x="75" y="25"/>
+						<Anchors><Anchor point="LEFT" relativeTo="DrSpammerIntervalOkButton" relativePoint="RIGHT"><Offset x="5" y="0"/></Anchor></Anchors>
+						<FontString inherits="GameFontHighlight"/>
+						<Scripts>
+							<OnEnterPressed>DrSpammer_SaveIntervalEdit()</OnEnterPressed>
+							<OnEscapePressed>DrSpammer_CancelIntervalEdit()</OnEscapePressed>
+							<OnEditFocusLost>DrSpammer_CancelIntervalEdit()</OnEditFocusLost>
+						</Scripts>
+					</EditBox>
+				</Frames>
+			</Frame>
+
+			<Button name="DrSpammerTranslitButton" inherits="UIPanelButtonTemplate" text="в eng Транслит">
+				<Size x="100" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="DrSpammerSettingTitleText31" relativePoint="TOPLEFT">
+						<Offset x="0" y="5"/>
+					</Anchor>
+				</Anchors>
+    <NormalFont style="GameFontNormalSmall" height="10"/>
+    <HighlightFont style="GameFontHighlightSmall" height="10"/>
+    <DisabledFont style="GameFontDisableSmall" height="10"/>
+				<Scripts>
+					<OnClick>DrSpammer_DoTranslit()</OnClick>
+				</Scripts>
+			</Button>
+
+			<Frame name="DrSpammerSettingText" inherits="DrSpammerSettingBackgroundTemplate">
+				<Size x="280" y="120"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleText31" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-15"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<ScrollFrame name="DrSpammerSettingTextScrollFrame" inherits="UIPanelScrollFrameTemplate">
+						<Size x="270" y="110"/>
+						<Anchors>
+							<Anchor point="TOPLEFT"><Offset x="5" y="-5"/></Anchor>
+							<Anchor point="RIGHT"><Offset x="-28" y="0"/></Anchor>
+						</Anchors>
+						<ScrollChild>
+							<EditBox name="DrSpammerSettingTextBox" letters="500" multiLine="true" enableMouse="true" enableKeyboard="true">
+								<Size x="245" y="400"/>
+								<FontString inherits="ChatFontNormal"/>
+								<Scripts>
+									<OnMouseDown>DrSpammerSettingTextBox_OnMouseDown(self, arg1)</OnMouseDown>
+									<OnTextChanged>DrSpammerSettingTextBox_OnTextChanged()</OnTextChanged>
+									<OnEditFocusGained>DrSpammer_OnEditFocusGained()</OnEditFocusGained>
+									<OnEditFocusLost>DrSpammer_OnEditFocusLost()</OnEditFocusLost>
+								</Scripts>
+							</EditBox>
+						</ScrollChild>
+					</ScrollFrame>
+				</Frames>
+			</Frame>
+
+			<Button name="DrSpammerTextEditButton" inherits="UIPanelButtonTemplate" text="Редактировать">
+				<Size x="120" y="25"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSettingText" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-10"/>
+					</Anchor>
+				</Anchors>
+				<Scripts><OnClick>DrSpammer_ToggleTextEditMode()</OnClick></Scripts>
+			</Button>
+
+			<Button name="DrSpammerSettingSaveButton" inherits="UIPanelButtonTemplate" text="Сохранить слот">
+				<Size x="105" y="25"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DrSpammerTextEditButton" relativePoint="RIGHT">
+						<Offset x="5" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts><OnClick>DrSpammer_SaveCurrentSettings()</OnClick></Scripts>
+			</Button>
+
+			<Button name="DrSpammerChatButton" inherits="UIPanelButtonTemplate" text="link">
+				<Size x="20" y="25"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="DrSpammerSettingSaveButton" relativePoint="RIGHT">
+						<Offset x="5" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSettingText" relativePoint="RIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>DrSpammer_ToggleChat()</OnClick>
+				</Scripts>
+			</Button>
+
+<Slider name="DrSpammerOpacitySlider" orientation="HORIZONTAL" minValue="0" maxValue="100" defaultValue="30" valueStep="10">
+    <Size x="100" y="15"/>
+    <Anchors>
+        <Anchor point="BOTTOMRIGHT">
+            <Offset x="-50" y="20"/>
+        </Anchor>
+    </Anchors>
+    <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\Buttons\UI-SliderBar-Border">
+        <EdgeSize><AbsValue val="8"/></EdgeSize>
+        <TileSize><AbsValue val="8"/></TileSize>
+    </Backdrop>
+    <ThumbTexture file="Interface\Buttons\UI-SliderBar-Button-Horizontal"/>
+    <Scripts>
+        <OnValueChanged>
+            local value = self:GetValue()
+            local alpha = value / 100
+            DrSpammerSetting:SetBackdropColor(0.1, 0.1, 0.1, alpha)
+            getglobal("DrSpammerOpacityText"):SetText("Прозрачность: " .. value .. "%")
+            if DrSpammerDB then
+                DrSpammerDB.Opacity = alpha
+            end
+        </OnValueChanged>
+    </Scripts>
+</Slider>
+
+			<Frame name="DrSpammerSlotFrame1" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSettingTitleSection2" relativePoint="BOTTOMLEFT"><Offset x="0" y="-15"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame2" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame1" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame3" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame2" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame4" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame3" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame5" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame4" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame6" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame5" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame7" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame6" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame8" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame7" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame9" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame8" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+			
+			<Frame name="DrSpammerSlotFrame10" inherits="DrSpammerSlotTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="DrSpammerSlotFrame9" relativePoint="BOTTOMLEFT"><Offset x="0" y="-5"/></Anchor>
+					<Anchor point="RIGHT" relativeTo="DrSpammerSetting" relativePoint="RIGHT"><Offset x="-15" y="0"/></Anchor>
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+<OnLoad>
+    self:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+    self:SetBackdropColor(0.1, 0.1, 0.1, 0.5);
+</OnLoad>
+			<OnHide>
+				if this.isMoving then
+					this:StopMovingOrSizing()
+					this.isMoving = false
+					DrSpammer:SavePosition(2)
+				end
+				DrSpammer_OnSettingHide()
+			</OnHide>
+			<OnMouseUp>
+				if this.isMoving then
+					this:StopMovingOrSizing()
+					this.isMoving = false
+					DrSpammer:SavePosition(2)
+				end
+			</OnMouseUp>
+			<OnMouseDown>
+				if (not this.isLocked or this.isLocked == 0) and arg1 == "LeftButton" then
+					this:StartMoving()
+					this.isMoving = true
+				end
+			</OnMouseDown>
+		</Scripts>
+	</Frame>
+</Ui>

@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: DrSpammer
+## Author: Dronis
+## Version: 30.300
+## Notes: Маленький удобный спамер
+## SavedVariablesPerCharacter: DrSpammerDB
+
+DrSpammer.xml
+DrSpammer.lua
